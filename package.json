@@ -9,7 +9,7 @@
 		"check-watch": "svelte-check --tsconfig ./tsconfig.json --watch",
 		"prettier": "prettier -w .",
 		"start": "npx web-ext run -s=dist",
-    	"watch": "vite build --watch --mode development"
+		"watch": "vite build --watch --mode development"
 	},
 	"devDependencies": {
 		"@sveltejs/vite-plugin-svelte": "^3.0.1",

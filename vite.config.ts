@@ -6,31 +6,13 @@ export default defineConfig({
 	plugins: [
 		svelte(),
 		webExtension({
-			browser: "firefox",
+			browser: 'firefox',
 			skipManifestValidation: true,
 			disableAutoLaunch: true,
-			watchFilePaths: ["src", "public"]
+			watchFilePaths: ['src', 'public'],
 		}),
 	],
-});
-// https://vitejs.dev/config/
-/*
-export default defineConfig({
-	plugins: [svelte()],
 	build: {
-		lib: {
-			entry: resolve(__dirname, 'lib/main.js'),
-			name: "background",
-			fileName: 'background',
-		},
-		rollupOptions: {
-			input: {
-				main: resolve(__dirname, 'src/main/index.html'),
-			},
-			output: {
-				preserveModules: false
-			}
-		},
+		sourcemap: 'inline',
 	},
 });
-*/

@@ -15,7 +15,7 @@
 	"background": {
 		"scripts": ["src/background/background.ts"]
 	},
-	"permissions": ["tabs"],
+	"permissions": ["tabs", "storage", "tabHide"],
 	"content_security_policy": {
 		"extension_pages": "script-src 'self' 'wasm-unsafe-eval' http://localhost:*; object-src 'self';"
 	}

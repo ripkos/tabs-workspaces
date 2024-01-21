@@ -1,64 +1,63 @@
 <script lang="ts">
-	import type { Workspace } from "./model";
-	import browser from "webextension-polyfill";
-	document.addEventListener('DOMContentLoaded', updateTabs);
-	let tabs: browser.Tabs.Tab[] = [];
-	let workspaces: Workspace[] = [];
-	let selectedWorksapce: Workspace | null = null;
-	let editMode = false;
-	function updateTabs() {
-		browser.tabs.query({}).then((x) => (tabs = x));
-	}
-
-	async function changeActiveTab(id: number | undefined) {
-		await browser.tabs.update(id!, { active: true });
-		updateTabs();
-	}
-	let nameValue = '';
-	function updateSelectedWorkspaceData(name:string) {
-		if(!selectedWorksapce) {
-			return;
+	import { onMount } from 'svelte';
+	import { writable, type Writable } from 'svelte/store';
+	import { dummyWorkspace, getWorkspacesHolder, setWorkspacesHolder } from '../lib/browser-tools';
+	import { getActiveWorkspace, type WorkspacesHolder } from '../lib/model';
+	import WorkspaceActions from './workspace-actions/WorkspaceActions.svelte';
+	import WorkspaceSelector from './workspace-selector/WorkspaceSelector.svelte';
+	let workspacesHolderStore: Writable<WorkspacesHolder> =
+		writable<WorkspacesHolder>(dummyWorkspace);
+	async function syncTabsWithWorkspaces(wh: WorkspacesHolder) {
+		const activeW = getActiveWorkspace(wh);
+		const tabs = await browser.tabs.query({
+			hidden: false,
+			windowId: browser.windows.WINDOW_ID_CURRENT,
+		});
+		const notPresent = tabs.filter((t) => !activeW.tabs.some((t2) => t2.id === t.id));
+		if (notPresent.length) {
+			activeW.tabs.push(...notPresent);
+			await setWorkspacesHolder(wh);
 		}
-		selectedWorksapce.name = name;
-		selectedWorksapce = selectedWorksapce;
-		workspaces = workspaces;
 	}
-	function createNewWorkspace(name:string) {
-		selectedWorksapce = {name: name};
-		workspaces.push(selectedWorksapce);
-		workspaces = workspaces;
-	}
+	onMount(async () => {
+		const workspaces = await getWorkspacesHolder();
+		await syncTabsWithWorkspaces(workspaces);
+		workspacesHolderStore.set(workspaces);
+		workspacesHolderStore.subscribe(async (wh) => {
+			await setWorkspacesHolder(wh);
+		});
+	});
 </script>
 
 <main>
-	<section class="workspaces">
-		<div class="list">
-			{#each workspaces as w}
-				<span>{w.name}</span>
-			{/each}
-			<button on:click={() => createNewWorkspace('a')}>Create workspace</button>
-		</div>
-		{#if editMode && selectedWorksapce}
-			 <div class="edit">
-				<input type="text" bind:value={nameValue} on:change={()=>updateSelectedWorkspaceData(nameValue)}>
-			 </div>
-		{/if}
-	</section>
-	<section class="current">
-		<li>
-			{#each tabs as t}
-				{#if t.id !== undefined && !t.hidden}
-					<ul>
-						<button on:click={async () => await changeActiveTab(t.id)}>{t.url}</button>
-					</ul>
-				{/if}
-			{/each}
-		</li>
-	</section>
+	<WorkspaceSelector {workspacesHolderStore}></WorkspaceSelector>
+	<div class="separator"></div>
+	<WorkspaceActions {workspacesHolderStore}></WorkspaceActions>
 </main>
 
 <style lang="scss">
-	section {
-		width: 255px;
+	main {
+		padding: 4px;
+		max-width: 792px;
+		max-height: 592px;
+		display: grid;
+		gap:8px;
+		grid-template-columns: minmax(0,1fr);
+		grid-template-rows: minmax(0,1fr) 1px minmax(0,1fr);
+		overflow: hidden;
+	}
+
+	.separator {
+		text-align: center;
+		width: 0;
+		height: 0;
+		border-width: 0;
+		border-top-width: 1px;
+		border-color: black;
+		border-style:solid;
+		width: 100%;
+		&::after{
+			content: "";
+		}
 	}
 </style>
