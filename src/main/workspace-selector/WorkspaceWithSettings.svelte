@@ -7,7 +7,7 @@
 	const colors = [1,2,3,4,5,7,8]
 </script>
 
-<li>
+<li class="flex-item flex center start">
 	<button style="{isDummy ? "visibility: hidden;" : ""}" disabled={isDummy || isActive}>Delete</button>
 	<div>
 		<button on:click={()=>w.onInactive=WorkspaceOnInactive.HIDE}>{WorkspaceOnInactive.HIDE}</button>
@@ -24,7 +24,7 @@
 
 <style lang="scss">
 	li {
-		display: flex;
-		flex-direction: row;
+		min-height: 32px;
+		border: 2px solid black;
 	}
 </style>

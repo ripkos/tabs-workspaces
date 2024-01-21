@@ -8,7 +8,6 @@
 
 	let workspacesHolderStore: Writable<WorkspacesHolder> =
 		writable<WorkspacesHolder>(getDummyWorkspaceHolder());
-	let entered = false;
 	async function syncTabsWithWorkspaces(wh: WorkspacesHolder) {
 		const activeW = getActiveWorkspace(wh);
 		const tabs = await browser.tabs.query({
@@ -31,26 +30,20 @@
 	});
 </script>
 
-<main class:entered>
+<main>
 	<WorkspaceSelector {workspacesHolderStore}></WorkspaceSelector>
 	<div class="separator"></div>
-	<WorkspaceActions {workspacesHolderStore} bind:entered></WorkspaceActions>
+	<WorkspaceActions {workspacesHolderStore}></WorkspaceActions>
 </main>
 
 <style lang="scss">
 	main {
 		padding: 4px;
-		max-width: 792px;
-		max-height: 592px;
-		display: grid;
-		gap: 8px;
-		grid-template-columns: minmax(0, 1fr);
+		width: 792px;
+		height: 592px;
+		display: flex;
+		flex-direction: column;
 		overflow: hidden;
-		grid-template-rows: minmax(0, 4fr) 1px minmax(0, 3fr);
-		&.entered {
-			grid-template-rows: minmax(0, 2fr) 1px minmax(0, 5fr);
-		}
-		transition: ease-out height 200ms;
 	}
 
 	.separator {

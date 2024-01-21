@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Workspace } from '../../lib/model';
-	
+
 	export let w: Workspace;
 	export let isActive: boolean = false;
 	async function changeHighLigh(id: number | undefined, value: boolean) {
@@ -10,12 +10,12 @@
 	}
 </script>
 
-<li class:active={isActive} class="workspace">
+<li class:active={isActive} class="workspace flex-item flex column nowrap">
 	<h1 class="head">{w.name}</h1>
-	<ul class="tabs">
+	<ul class="tabs flex-item flex column oy nowrap">
 		{#each w.tabs as t}
-			<li class="tab">
-				<button>
+			<li class="tab flex-item no-shrink">
+				<button class="flex center left space-between">
 					{#if isActive}
 						{#if t.active}
 							<span role="document" class="preview disabled">X</span>
@@ -28,7 +28,7 @@
 							>
 						{/if}
 					{/if}
-					<span>{t.title}</span>
+					<span class="flex-item">{t.title}</span>
 					<span>o</span>
 				</button>
 			</li>
@@ -41,26 +41,17 @@
 		border-radius: 8px;
 		border-width: 2px;
 		border-style: solid;
-		display: grid;
 		.head {
 			text-align: center;
 			height: 32px;
 			width: 100%;
 		}
 		.tabs {
-			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
-			align-items: stretch;
-			overflow-y: scroll;
+			gap: 4px;
 			.tab {
-				width: 100%;
 				padding: 4px;
 				button {
-					text-align: left;
 					min-height: 32px;
-					display: flex;
-					align-items: center;
 					gap: 4px;
 					width: 100%;
 					border-radius: 8px;

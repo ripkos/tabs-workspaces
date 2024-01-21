@@ -7,10 +7,9 @@
 	export let workspacesHolderStore: Writable<WorkspacesHolder>;
 </script>
 
-<section>
+<section class="flex column flex-item">
 	{#if $workspacesHolderStore}
-		<ul>
-			<WorkspaceWithSettings isDummy={true} w={defaultWorkspace}></WorkspaceWithSettings>
+		<ul class="flex column oy nowrap">
 			{#each $workspacesHolderStore.workspaces as w}
 				{#if w.id === $workspacesHolderStore.activeWorkspaceID}
 					<WorkspaceWithSettings {w} isActive={true}></WorkspaceWithSettings>
@@ -21,13 +20,30 @@
 					<WorkspaceWithSettings {w}></WorkspaceWithSettings>
 				{/if}
 			{/each}
+			<WorkspaceWithSettings isDummy={true} w={defaultWorkspace}></WorkspaceWithSettings>
+			<WorkspaceWithSettings isDummy={true} w={defaultWorkspace}></WorkspaceWithSettings>
+			<WorkspaceWithSettings isDummy={true} w={defaultWorkspace}></WorkspaceWithSettings>
+			<WorkspaceWithSettings isDummy={true} w={defaultWorkspace}></WorkspaceWithSettings>
+			<WorkspaceWithSettings isDummy={true} w={defaultWorkspace}></WorkspaceWithSettings>
+			<!-- <WorkspaceWithSettings isDummy={true} w={defaultWorkspace}></WorkspaceWithSettings>
+			<WorkspaceWithSettings isDummy={true} w={defaultWorkspace}></WorkspaceWithSettings>
+			<WorkspaceWithSettings isDummy={true} w={defaultWorkspace}></WorkspaceWithSettings>
+			<WorkspaceWithSettings isDummy={true} w={defaultWorkspace}></WorkspaceWithSettings>
+			<WorkspaceWithSettings isDummy={true} w={defaultWorkspace}></WorkspaceWithSettings>
+			<WorkspaceWithSettings isDummy={true} w={defaultWorkspace}></WorkspaceWithSettings>
+			<WorkspaceWithSettings isDummy={true} w={defaultWorkspace}></WorkspaceWithSettings>
+			<WorkspaceWithSettings isDummy={true} w={defaultWorkspace}></WorkspaceWithSettings>
+			<WorkspaceWithSettings isDummy={true} w={defaultWorkspace}></WorkspaceWithSettings>
+			<WorkspaceWithSettings isDummy={true} w={defaultWorkspace}></WorkspaceWithSettings> -->
 		</ul>
 	{/if}
 </section>
 
 <style lang="scss">
 	section {
+		padding: 16px;
 		ul {
+			gap: 8px;
 		}
 	}
 </style>

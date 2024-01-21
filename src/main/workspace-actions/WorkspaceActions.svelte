@@ -2,18 +2,13 @@
 	import WorkspaceWithTabs from './WorkspaceWithTabs.svelte';
 	import type { Writable } from 'svelte/store';
 	import type { Workspace, WorkspacesHolder } from '../../lib/model';
-	
+
 	export let workspacesHolderStore: Writable<WorkspacesHolder>;
-	export let entered = false;
 </script>
 
-<section
-	role="alert"
-	on:mouseenter={() => (entered = true)}
-	on:mouseleave={() => (entered = false)}
->
+<section class="flex-item">
 	{#if $workspacesHolderStore}
-		<ul class="workspaces active">
+		<ul class="workspaces active flex column nowrap">
 			{#each $workspacesHolderStore.workspaces as w}
 				{#if w.id === $workspacesHolderStore.activeWorkspaceID}
 					<WorkspaceWithTabs {w} isActive={true}></WorkspaceWithTabs>
@@ -23,7 +18,7 @@
 		<div class="interactions">
 			<span>a</span>
 		</div>
-		<ul class="workspaces carousel">
+		<ul class="workspaces carousel flex ox">
 			{#if $workspacesHolderStore.workspaces?.length > 1}
 				{#each $workspacesHolderStore.workspaces as w}
 					{#if w.id !== $workspacesHolderStore.activeWorkspaceID}
@@ -31,7 +26,7 @@
 					{/if}
 				{/each}
 			{:else}
-				<li class="placeholder">
+				<li class="placeholder flex center">
 					<div>Create another workspace first</div>
 				</li>
 			{/if}
@@ -41,23 +36,17 @@
 
 <style lang="scss">
 	section {
+		transition: flex ease 200ms;
+		&:hover {
+			flex-grow: 4;
+		}
 		padding: 16px;
 		display: grid;
 		grid-template-columns: 2fr 1fr 3fr;
 		grid-template-rows: minmax(0, 1fr);
-		.workspaces {
-			display: flex;
-			flex-direction: row;
-			&.carousel {
-				overflow-x: scroll;
-			}
-		}
 	}
 	.placeholder {
-		display: flex;
 		width: 100%;
-		justify-content: center;
-		align-items: center;
 		border: 2px dotted gray;
 		div {
 			color: gray;

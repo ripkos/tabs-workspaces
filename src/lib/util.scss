@@ -1,0 +1,54 @@
+.flex {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	&.column {
+		flex-direction: column;
+	}
+	&-item {
+		flex:1;
+		&.no-shrink {
+			flex-shrink: 0;
+			flex-basis: auto;
+		}
+	}
+	&.stretch {
+		align-content: stretch;
+	}
+	&.space-between {
+		justify-content: space-between;
+	}
+	&.center {
+		justify-content: center;
+		align-items: center;
+	}
+	&.start {
+		justify-content: end;
+	}
+	&.end {
+		justify-content: start;
+	}
+	&.nowrap {
+		flex-wrap: nowrap;
+	}
+}
+
+.oy {
+	overflow-y: auto;
+}
+
+.ox {
+	overflow-x: auto;
+}
+
+.text {
+	&-left {
+		text-align: left;
+	}
+	&-right {
+		text-align: right;
+	}
+	&-cetner {
+		text-align: center;
+	}
+}
