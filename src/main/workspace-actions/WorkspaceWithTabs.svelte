@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Workspace } from '../../lib/model';
+	
 	export let w: Workspace;
 	export let isActive: boolean = false;
 	async function changeHighLigh(id: number | undefined, value: boolean) {
@@ -15,7 +16,7 @@
 		{#each w.tabs as t}
 			<li class="tab">
 				<button>
-					{#if isActive}				
+					{#if isActive}
 						{#if t.active}
 							<span role="document" class="preview disabled">X</span>
 						{:else}
@@ -50,7 +51,7 @@
 			display: flex;
 			flex-direction: row;
 			flex-wrap: wrap;
-			align-items:stretch;
+			align-items: stretch;
 			overflow-y: scroll;
 			.tab {
 				width: 100%;
@@ -72,4 +73,3 @@
 		}
 	}
 </style>
-

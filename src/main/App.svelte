@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
-	import { dummyWorkspace, getWorkspacesHolder, setWorkspacesHolder } from '../lib/browser-tools';
+	import { getDummyWorkspaceHolder, getWorkspacesHolder, setWorkspacesHolder } from '../lib/browser-tools';
 	import { getActiveWorkspace, type WorkspacesHolder } from '../lib/model';
 	import WorkspaceActions from './workspace-actions/WorkspaceActions.svelte';
 	import WorkspaceSelector from './workspace-selector/WorkspaceSelector.svelte';
+
 	let workspacesHolderStore: Writable<WorkspacesHolder> =
-		writable<WorkspacesHolder>(dummyWorkspace);
+		writable<WorkspacesHolder>(getDummyWorkspaceHolder());
+	let entered = false;
 	async function syncTabsWithWorkspaces(wh: WorkspacesHolder) {
 		const activeW = getActiveWorkspace(wh);
 		const tabs = await browser.tabs.query({
@@ -29,10 +31,10 @@
 	});
 </script>
 
-<main>
+<main class:entered>
 	<WorkspaceSelector {workspacesHolderStore}></WorkspaceSelector>
 	<div class="separator"></div>
-	<WorkspaceActions {workspacesHolderStore}></WorkspaceActions>
+	<WorkspaceActions {workspacesHolderStore} bind:entered></WorkspaceActions>
 </main>
 
 <style lang="scss">
@@ -41,10 +43,14 @@
 		max-width: 792px;
 		max-height: 592px;
 		display: grid;
-		gap:8px;
-		grid-template-columns: minmax(0,1fr);
-		grid-template-rows: minmax(0,1fr) 1px minmax(0,1fr);
+		gap: 8px;
+		grid-template-columns: minmax(0, 1fr);
 		overflow: hidden;
+		grid-template-rows: minmax(0, 4fr) 1px minmax(0, 3fr);
+		&.entered {
+			grid-template-rows: minmax(0, 2fr) 1px minmax(0, 5fr);
+		}
+		transition: ease-out height 200ms;
 	}
 
 	.separator {
@@ -54,10 +60,10 @@
 		border-width: 0;
 		border-top-width: 1px;
 		border-color: black;
-		border-style:solid;
+		border-style: solid;
 		width: 100%;
-		&::after{
-			content: "";
+		&::after {
+			content: '';
 		}
 	}
 </style>

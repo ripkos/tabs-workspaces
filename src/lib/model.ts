@@ -1,10 +1,17 @@
 import type { Tabs } from 'webextension-polyfill';
 
+export enum WorkspaceOnInactive {
+	HIDE = 'Hide',
+	SUSPSEND = 'Suspend',
+	CLOSE = 'Close',
+}
+
 export type Workspace = {
 	id: string;
 	name: string;
 	color: string;
 	tabs: Tabs.Tab[];
+	onInactive: WorkspaceOnInactive
 };
 
 export type WorkspacesHolder = {

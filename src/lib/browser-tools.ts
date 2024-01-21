@@ -1,18 +1,26 @@
-import type { Workspace, WorkspacesHolder } from './model';
+import { WorkspaceOnInactive, type Workspace, type WorkspacesHolder } from './model';
 import browser from 'webextension-polyfill';
 
-const emptyWorkspace: Workspace = {
-	id: new Date().toString(),
-	name: 'Default',
-	color: '#999999',
-	tabs: [],
-};
-export const dummyWorkspace: WorkspacesHolder = {
-	workspaces: [emptyWorkspace],
-	activeWorkspaceID: emptyWorkspace.id,
-};
+export function getDefaultWorkspace() : Workspace {
+	return {
+		id: new Date().toString(),
+		name: 'Unnamed',
+		color: '#999999',
+		tabs: [],
+		onInactive: WorkspaceOnInactive.HIDE
+	};
+}
+
+export function getDummyWorkspaceHolder(): WorkspacesHolder {
+	const defaultWorkspace = getDefaultWorkspace();
+	return {
+		workspaces: [defaultWorkspace],
+		activeWorkspaceID: defaultWorkspace.id,
+	};
+}
+
 export async function initEmptyWorkspaces() {
-	await browser.storage.local.set(dummyWorkspace);
+	await browser.storage.local.set(getDummyWorkspaceHolder());
 }
 
 export async function getWorkspacesHolder(): Promise<WorkspacesHolder> {

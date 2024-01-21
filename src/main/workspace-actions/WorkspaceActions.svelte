@@ -1,12 +1,17 @@
 <script lang="ts">
-  import WorkspaceWithTabs from './WorkspaceWithTabs.svelte';
-
+	import WorkspaceWithTabs from './WorkspaceWithTabs.svelte';
 	import type { Writable } from 'svelte/store';
 	import type { Workspace, WorkspacesHolder } from '../../lib/model';
+	
 	export let workspacesHolderStore: Writable<WorkspacesHolder>;
+	export let entered = false;
 </script>
 
-<section>
+<section
+	role="alert"
+	on:mouseenter={() => (entered = true)}
+	on:mouseleave={() => (entered = false)}
+>
 	{#if $workspacesHolderStore}
 		<ul class="workspaces active">
 			{#each $workspacesHolderStore.workspaces as w}
@@ -27,7 +32,7 @@
 				{/each}
 			{:else}
 				<li class="placeholder">
-					<span>+</span>
+					<div>Create another workspace first</div>
 				</li>
 			{/if}
 		</ul>
@@ -36,6 +41,7 @@
 
 <style lang="scss">
 	section {
+		padding: 16px;
 		display: grid;
 		grid-template-columns: 2fr 1fr 3fr;
 		grid-template-rows: minmax(0, 1fr);
@@ -44,16 +50,17 @@
 			flex-direction: row;
 			&.carousel {
 				overflow-x: scroll;
-				.placeholder {
-					display: flex;
-					text-align: center;
-					justify-items: center;
-					border: 2px dotted aqua;
-					span {
-						flex-grow: 1;
-					}
-				}
 			}
+		}
+	}
+	.placeholder {
+		display: flex;
+		width: 100%;
+		justify-content: center;
+		align-items: center;
+		border: 2px dotted gray;
+		div {
+			color: gray;
 		}
 	}
 </style>
