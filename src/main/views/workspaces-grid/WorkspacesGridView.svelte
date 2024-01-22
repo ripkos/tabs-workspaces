@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Writable } from 'svelte/store';
-	import type { WorkspacesHolder } from '../../lib/model';
-	import WorkspaceWithSettings from './WorkspaceWithSettings.svelte';
-	import { getDefaultWorkspace } from '../../lib/browser-tools';
+	import WorkspaceWithSettings from './WorkspaceWithSettingsComponent.svelte';
+	import { getDefaultWorkspace } from '../../../lib/browser-tools';
+	import type { WorkspacesHolder } from '../../../lib/model';
 	const defaultWorkspace = getDefaultWorkspace();
 	export let workspacesHolderStore: Writable<WorkspacesHolder>;
 </script>

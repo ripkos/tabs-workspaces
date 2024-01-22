@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Workspace } from '../../lib/model';
+	import type { Workspace } from '../../../lib/model';
 
 	export let w: Workspace;
 	export let isActive: boolean = false;

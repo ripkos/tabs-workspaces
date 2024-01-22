@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { WorkspaceOnInactive, type Workspace } from "../../lib/model";
+	import { type Workspace, WorkspaceOnInactive } from "../../../lib/model";
+
 
 	export let isDummy = false;
 	export let isActive = false;

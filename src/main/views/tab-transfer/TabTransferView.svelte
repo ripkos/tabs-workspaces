@@ -1,7 +1,7 @@
 <script lang="ts">
-	import WorkspaceWithTabs from './WorkspaceWithTabs.svelte';
+	import WorkspaceWithTabs from './WorkspaceWithTabsComponent.svelte';
 	import type { Writable } from 'svelte/store';
-	import type { Workspace, WorkspacesHolder } from '../../lib/model';
+	import type { Workspace, WorkspacesHolder } from '../../../lib/model';
 
 	export let workspacesHolderStore: Writable<WorkspacesHolder>;
 </script>

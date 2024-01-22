@@ -3,8 +3,8 @@
 	import { writable, type Writable } from 'svelte/store';
 	import { getDummyWorkspaceHolder, getWorkspacesHolder, setWorkspacesHolder } from '../lib/browser-tools';
 	import { getActiveWorkspace, type WorkspacesHolder } from '../lib/model';
-	import WorkspaceActions from './workspace-actions/WorkspaceActions.svelte';
-	import WorkspaceSelector from './workspace-selector/WorkspaceSelector.svelte';
+	import TabTransferView from './views/tab-transfer/TabTransferView.svelte';
+	import WorkspacesGridView from './views/workspaces-grid/WorkspacesGridView.svelte';
 
 	let workspacesHolderStore: Writable<WorkspacesHolder> =
 		writable<WorkspacesHolder>(getDummyWorkspaceHolder());
@@ -31,9 +31,9 @@
 </script>
 
 <main>
-	<WorkspaceSelector {workspacesHolderStore}></WorkspaceSelector>
+	<WorkspacesGridView {workspacesHolderStore}></WorkspacesGridView>
 	<div class="separator"></div>
-	<WorkspaceActions {workspacesHolderStore}></WorkspaceActions>
+	<TabTransferView {workspacesHolderStore}></TabTransferView>
 </main>
 
 <style lang="scss">
