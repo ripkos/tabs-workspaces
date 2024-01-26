@@ -1,13 +1,14 @@
 import { WorkspaceOnInactive, type Workspace, type WorkspacesHolder } from './model';
 import browser from 'webextension-polyfill';
 
-export function getDefaultWorkspace() : Workspace {
+export function getDefaultWorkspace(dummy = false): Workspace {
 	return {
 		id: new Date().toString(),
-		name: 'Unnamed',
+		name: dummy ? '+' : 'Workspace',
 		color: '#999999',
 		tabs: [],
-		onInactive: WorkspaceOnInactive.HIDE
+		onInactive: WorkspaceOnInactive.HIDE,
+		isDummy: dummy,
 	};
 }
 
