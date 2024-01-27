@@ -10,13 +10,16 @@
 		"128": "icon/128.png"
 	},
 	"action": {
-		"default_popup": "src/main/index.html"
+		"default_popup": "src/popup/index.html"
 	},
 	"background": {
-		"scripts": ["src/background/background.ts"]
+		"scripts": [
+			"src/background/background.ts"
+		]
 	},
-	"permissions": ["tabs", "storage", "tabHide"],
-	"content_security_policy": {
-		"extension_pages": "script-src 'self' 'wasm-unsafe-eval' http://localhost:*; object-src 'self';"
-	}
+	"permissions": [
+		"tabs",
+		"storage",
+		"tabHide"
+	]
 }
