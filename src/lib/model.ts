@@ -7,7 +7,7 @@ export enum WorkspaceOnInactive {
 }
 
 export type Workspace = {
-	id: string;
+	id: number;
 	name: string;
 	color: string;
 	tabs: Tabs.Tab[];
@@ -17,5 +17,5 @@ export type Workspace = {
 
 export type WorkspacesHolder = {
 	workspaces: Workspace[];
-	activeWorkspaceID: string;
+	activeWorkspaceID: number;
 };

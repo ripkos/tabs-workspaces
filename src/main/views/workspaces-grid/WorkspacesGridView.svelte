@@ -1,44 +1,50 @@
 <script lang="ts">
-	import { workspacesHolder } from '../../store';
-	import { getDefaultWorkspace } from '../../../lib/browser-tools';
-	import { draggedWorkspace } from '../../store';
-	function shouldExpand(l: number): boolean {
-		return (!(l === 4 || l === 9 || l === 16) && l <= 16) || (l > 16 && l % 4 !== 0);
-	}
+	import { clearEmptyRows } from '../../shared';
+	import { workspacesHolder, draggedWorkspace } from '../../store';
 
 	$: len =
 		$workspacesHolder.workspaces.length > 4 ? ($workspacesHolder.workspaces.length > 9 ? 4 : 3) : 2;
 
-	export function fillWorkspaces() {
-		while (shouldExpand($workspacesHolder.workspaces.length)) {
-			addWorkspace(true);
-		}
-	}
-	function addWorkspace(dummy = false) {
+	function replaceDummyWithWorkspace(index: number) {
 		workspacesHolder.update((x) => {
-			x.workspaces.push(getDefaultWorkspace(dummy));
+			x.workspaces[index].isDummy = false;
+			x.workspaces[index].name = 'Workspace';
 			return x;
 		});
-		if (!dummy) fillWorkspaces();
+		clearEmptyRows(workspacesHolder);
+	}
+	function setActiveWorkspace(id: number) {
+		workspacesHolder.update((x) => {
+			x.activeWorkspaceID = id;
+			return x;
+		});
 	}
 </script>
 
 <section>
 	{#if $workspacesHolder}
-		<ul style="grid-template-columns: repeat({len}, 1fr);">
-			{#each $workspacesHolder.workspaces as w}
+		<ul style="">
+			{#each $workspacesHolder.workspaces as w, i}
 				<li>
 					<button
 						class:dummy={w.isDummy}
-						draggable={true}
-						on:click={() => w.isDummy && addWorkspace(false)}
+						draggable={!w.isDummy}
+						on:click={() => {
+							if (w.isDummy) {
+								replaceDummyWithWorkspace(i);
+							} else {
+								setActiveWorkspace(w.id);
+							}
+						}}
 						on:dragstart={(event) => {
 							$draggedWorkspace = w;
 							event.dataTransfer && (event.dataTransfer.effectAllowed = 'all');
 							//event.preventDefault();
 						}}
+						on:dragend={() => {
+							$draggedWorkspace = null;
+						}}
 					>
-						<!-- on:dragend={()=>{$draggedWorkspace=null}} -->
 						<span>{w.name}</span>
 					</button>
 				</li>
@@ -57,7 +63,8 @@
 		ul {
 			padding-right: $x4;
 			display: grid;
-			grid-template-rows: repeat(2, 1fr);
+			grid-template-columns: repeat(4, 1fr);
+			//grid-template-rows: repeat(2, 1fr);
 			grid-auto-flow: row dense;
 			gap: $x4;
 			li {

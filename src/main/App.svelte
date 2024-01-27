@@ -1,35 +1,43 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getWorkspacesHolder, setWorkspacesHolder } from '../lib/browser-tools';
-	import type { WorkspacesHolder } from '../lib/model';
-	import TabTransferView from './views/tab-transfer/TabTransferView.svelte';
-	import WorkspacesGridView from './views/workspaces-grid/WorkspacesGridView.svelte';
+	import { getDefaultWorkspace } from '../lib/browser-tools';
 	import { initWorkspaceStore, workspacesHolder } from './store';
+	import TabTransferView from './views/tab-transfer/TabTransferView.svelte';
 	import WorkspaceSettingsView from './views/workspace-settings/WorkspaceSettingsView.svelte';
+	import WorkspacesGridView from './views/workspaces-grid/WorkspacesGridView.svelte';
 
 	async function syncTabsWithWorkspaces() {
 		const wh = $workspacesHolder;
-		const activeW = wh.workspaces.find((x) => x.id === wh.activeWorkspaceID)!;
+		const activeW = wh.workspaces.find((x) => x.id === wh.activeWorkspaceID);
 		const tabs = await browser.tabs.query({
 			hidden: false,
 			windowId: browser.windows.WINDOW_ID_CURRENT,
 		});
-		const notPresent = tabs.filter((t) => !activeW.tabs.some((t2) => t2.id === t.id));
-		if (notPresent.length) {
+		if (activeW) {
+			const notPresent = tabs.filter((t) => !activeW.tabs.some((t2) => t2.id === t.id));
+			if (notPresent.length) {
+				workspacesHolder.update((wh) => {
+					const activeW = wh.workspaces.find((x) => x.id === wh.activeWorkspaceID)!;
+					activeW.tabs.push(...notPresent);
+					return wh;
+				});
+			}
+		} else {
 			workspacesHolder.update((wh) => {
-				const activeW = wh.workspaces.find((x) => x.id === wh.activeWorkspaceID)!;
-				activeW.tabs.push(...notPresent);
+				const newID =
+					wh.workspaces.length < 1 ? 0 : Math.max(...wh.workspaces.map((w) => w.id)) + 1;
+				const activeW = getDefaultWorkspace(newID, false);
+				activeW.tabs.push(...tabs);
+				wh.activeWorkspaceID = activeW.id;
+				wh.workspaces.push(activeW);
 				return wh;
 			});
 		}
 	}
 
-	let fillWorkspaces: () => void;
-
 	onMount(async () => {
 		await initWorkspaceStore();
 		await syncTabsWithWorkspaces();
-		fillWorkspaces();
 	});
 </script>
 
@@ -38,7 +46,7 @@
 		<WorkspaceSettingsView></WorkspaceSettingsView>
 	</div>
 	<div class="right">
-		<WorkspacesGridView bind:fillWorkspaces></WorkspacesGridView>
+		<WorkspacesGridView></WorkspacesGridView>
 		<TabTransferView></TabTransferView>
 	</div>
 </main>

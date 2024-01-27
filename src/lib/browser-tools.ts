@@ -1,9 +1,9 @@
 import { WorkspaceOnInactive, type Workspace, type WorkspacesHolder } from './model';
 import browser from 'webextension-polyfill';
 
-export function getDefaultWorkspace(dummy = false): Workspace {
+export function getDefaultWorkspace(id: number, dummy = false): Workspace {
 	return {
-		id: new Date().toString(),
+		id: id,
 		name: dummy ? '+' : 'Workspace',
 		color: '#999999',
 		tabs: [],
@@ -12,16 +12,12 @@ export function getDefaultWorkspace(dummy = false): Workspace {
 	};
 }
 
-export function getDummyWorkspaceHolder(): WorkspacesHolder {
-	const defaultWorkspace = getDefaultWorkspace();
-	return {
+export async function initEmptyWorkspaces() {
+	const defaultWorkspace = getDefaultWorkspace(0);
+	await browser.storage.local.set({
 		workspaces: [defaultWorkspace],
 		activeWorkspaceID: defaultWorkspace.id,
-	};
-}
-
-export async function initEmptyWorkspaces() {
-	await browser.storage.local.set(getDummyWorkspaceHolder());
+	});
 }
 
 export async function getWorkspacesHolder(): Promise<WorkspacesHolder> {
