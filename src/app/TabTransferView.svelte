@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Workspace } from '../../../lib/model';
-	import WorkspaceWithTabs from './WorkspaceWithTabs.svelte';
+	import type { Workspace } from '../lib/model';
+	import WorkspaceWithTabs from './components/WorkspaceWithTabs.svelte';
 	let workspaceLeft: Workspace | null = null;
 	let workspaceRight: Workspace | null = null;
 </script>
@@ -15,7 +15,7 @@
 </section>
 
 <style lang="scss">
-	@import '../../../lib/vars';
+	@import '../lib/vars';
 	section {
 		flex: 1 0 $x6;
 		transition: flex ease 200ms;

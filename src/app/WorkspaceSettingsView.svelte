@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { getDefaultWorkspace } from '../../../lib/browser-tools';
-	import { type Workspace, WorkspaceOnInactive } from '../../../lib/model';
-	import { clearEmptyRows } from '../../shared';
-	import { draggedWorkspace, workspacesHolder } from '../../store';
+	import { getDefaultWorkspace } from '../lib/browser-tools';
+	import { type Workspace, WorkspaceOnInactive } from '../lib/model';
+	import { clearEmptyRows } from './shared';
+	import { draggedWorkspace, workspacesHolder } from './store';
 	let selectedWorkspace: Workspace | null = null;
 	const options = [
 		WorkspaceOnInactive.HIDE,
@@ -108,7 +108,7 @@
 </section>
 
 <style lang="scss">
-	@import '../../../lib/vars';
+	@import '../lib/vars';
 	section {
 		flex: 1;
 		display: flex;

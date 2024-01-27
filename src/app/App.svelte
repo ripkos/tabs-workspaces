@@ -2,9 +2,9 @@
 	import { onMount } from 'svelte';
 	import { getDefaultWorkspace } from '../lib/browser-tools';
 	import { initWorkspaceStore, workspacesHolder } from './store';
-	import TabTransferView from './views/tab-transfer/TabTransferView.svelte';
-	import WorkspaceSettingsView from './views/workspace-settings/WorkspaceSettingsView.svelte';
-	import WorkspacesGridView from './views/workspaces-grid/WorkspacesGridView.svelte';
+	import TabTransferView from './TabTransferView.svelte';
+	import WorkspaceSettingsView from './WorkspaceSettingsView.svelte';
+	import WorkspacesGridView from './WorkspacesGridView.svelte';
 
 	async function syncTabsWithWorkspaces() {
 		const wh = $workspacesHolder;

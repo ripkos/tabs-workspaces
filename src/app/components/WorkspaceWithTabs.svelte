@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Workspace } from '../../../lib/model';
+	import type { Workspace } from '../../lib/model';
 
 	export let w: Workspace | null = null;
 	export let isActive: boolean = false;
@@ -41,7 +41,7 @@
 {/if}
 
 <style lang="scss">
-	@import '../../../lib/vars';
+	@import '../../lib/vars';
 	.workspace {
 		border-radius: $x4;
 		border-width: $x2;

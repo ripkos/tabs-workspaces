@@ -5,6 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"preview": "vite preview",
+		"build": "vite build",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check-watch": "svelte-check --tsconfig ./tsconfig.json --watch",
 		"prettier": "prettier -w .",

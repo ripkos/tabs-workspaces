@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { clearEmptyRows } from '../../shared';
-	import { workspacesHolder, draggedWorkspace } from '../../store';
+	import { clearEmptyRows } from './shared';
+	import { workspacesHolder, draggedWorkspace } from './store';
 
 	$: len =
 		$workspacesHolder.workspaces.length > 4 ? ($workspacesHolder.workspaces.length > 9 ? 4 : 3) : 2;
@@ -54,7 +54,7 @@
 </section>
 
 <style lang="scss">
-	@import '../../../lib/vars';
+	@import '../lib/vars';
 	section {
 		flex: 1 1 auto;
 		overflow-y: scroll;
