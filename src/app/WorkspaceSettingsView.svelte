@@ -3,13 +3,23 @@
 	import { type Workspace, WorkspaceOnInactive } from '../lib/model';
 	import { clearEmptyRows } from './shared';
 	import { draggedWorkspace, workspacesHolder } from './store';
+	import ColorPicker from 'svelte-awesome-color-picker';
 	let selectedWorkspace: Workspace | null = null;
 	const options = [
 		WorkspaceOnInactive.HIDE,
 		WorkspaceOnInactive.SUSPSEND,
 		WorkspaceOnInactive.CLOSE,
 	];
-	const colors = [1, 2, 3, 4, 5, 7, 8];
+	const colors = [
+		'#5F6368',
+		'#4285F4',
+		'#EA4335',
+		'#FBBC05',
+		'#34A853',
+		'#F28B82',
+		'#A142F4',
+		'#1DA1F2',
+	];
 	let drag = false;
 	function clearWorkspace() {
 		selectedWorkspace = null;
@@ -66,11 +76,6 @@
 		</div>
 	{:else}
 		<button class="btn-clear" on:click={clearWorkspace}>X</button>
-		<div class="preview">
-			<button disabled>
-				<span>{selectedWorkspace.name}</span>
-			</button>
-		</div>
 		<div>
 			<label>
 				Name:
@@ -94,10 +99,27 @@
 				</label>
 			{/each}
 		</div>
-		<div class="color-picker">
+		<div class="color-options">
 			{#each colors as c}
-				<span>{c}</span>
+				<button
+					class="color-option"
+					on:click={() => {
+						selectedWorkspace && (selectedWorkspace.colorPrimary = c);
+						updateSelectedWorkspace();
+					}}
+					style="background-color: {c}; color: {c}">+</button
+				>
 			{/each}
+		</div>
+		<div class="color-picker-wrapper">
+			<ColorPicker
+				isDialog={false}
+				on:input={updateSelectedWorkspace}
+				bind:hex={selectedWorkspace.colorPrimary}
+				--picker-width="160px"
+				--picker-height="160px"
+				textInputModes={['hex']}
+			/>
 		</div>
 		<button
 			on:click={replaceDeletedWithDummy}
@@ -133,6 +155,12 @@
 				border-color: yellow;
 			}
 		}
+		.color-options {
+			.color-option {
+				width: $x5;
+				height: $x5;
+			}
+		}
 		// Edit mode
 		.preview {
 			width: $x8;
@@ -165,5 +193,24 @@
 			background-color: #f74b4b;
 			justify-self: flex-end;
 		}
+	}
+	.color-picker-wrapper {
+		align-self: center;
+	}
+	:global(.color-picker-wrapper .color-picker .wrapper) {
+		padding: 0;
+		background: none;
+		margin: 0;
+		border: unset;
+		width: unset;
+	}
+	:global(
+			.color-picker-wrapper
+				.color-picker
+				.wrapper
+				.input-container
+				input[aria-label='alpha channel']
+		) {
+		display: none;
 	}
 </style>

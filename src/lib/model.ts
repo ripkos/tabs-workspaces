@@ -9,7 +9,8 @@ export enum WorkspaceOnInactive {
 export type Workspace = {
 	id: number;
 	name: string;
-	color: string;
+	colorPrimary: string;
+	colorSecondary: string;
 	tabs: Tabs.Tab[];
 	onInactive: WorkspaceOnInactive;
 	isDummy: boolean;

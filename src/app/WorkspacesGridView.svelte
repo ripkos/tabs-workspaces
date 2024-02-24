@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { clearEmptyRows } from './shared';
 	import { workspacesHolder, draggedWorkspace } from './store';
-
+	let draggedIndex = -1;
+	let hoverOverIndex = -1;
 	$: len =
 		$workspacesHolder.workspaces.length > 4 ? ($workspacesHolder.workspaces.length > 9 ? 4 : 3) : 2;
 
@@ -19,14 +20,25 @@
 			return x;
 		});
 	}
+
+	function swapWorkspaces(i1: number, i2: number) {
+		if (i1 === i2) return;
+		workspacesHolder.update((x) => {
+			[x.workspaces[i1], x.workspaces[i2]] = [x.workspaces[i2], x.workspaces[i1]];
+			return x;
+		});
+	}
+
+	let drag = false;
 </script>
 
 <section>
 	{#if $workspacesHolder}
-		<ul style="">
+		<ul>
 			{#each $workspacesHolder.workspaces as w, i}
-				<li>
+				<li class:drag={drag && i !== draggedIndex && i === hoverOverIndex}>
 					<button
+						style="background-color: {w.colorPrimary};"
 						class:dummy={w.isDummy}
 						draggable={!w.isDummy}
 						on:click={() => {
@@ -38,11 +50,35 @@
 						}}
 						on:dragstart={(event) => {
 							$draggedWorkspace = w;
+							draggedIndex = i;
+							drag = true;
 							event.dataTransfer && (event.dataTransfer.effectAllowed = 'all');
-							//event.preventDefault();
 						}}
 						on:dragend={() => {
+							draggedIndex = -1;
 							$draggedWorkspace = null;
+						}}
+						on:dragenter={(event) => {
+							event.preventDefault();
+						}}
+						on:dragleave={(event) => {
+							event.preventDefault();
+							hoverOverIndex = -1;
+						}}
+						on:dragover={(event) => {
+							if (i !== draggedIndex) {
+								event.preventDefault();
+								event.dataTransfer && (event.dataTransfer.dropEffect = 'move');
+								hoverOverIndex = i;
+							}
+						}}
+						on:drop={(event) => {
+							if (draggedIndex > -1) {
+								swapWorkspaces(draggedIndex, i);
+							}
+							drag = false;
+							draggedIndex = -1;
+							hoverOverIndex = -1;
 						}}
 					>
 						<span>{w.name}</span>
@@ -73,11 +109,17 @@
 				padding: 0;
 				margin: 0;
 				font-size: $x5;
+				&.drag {
+					button,
+					.dummy {
+						border: $x2 yellow dotted;
+						color: red;
+					}
+				}
 				button {
 					border: $x2 black solid;
 					&.dummy {
 						border: $x2 grey dotted;
-						background-color: rgba(128, 128, 128, 0.05);
 					}
 					width: 100%;
 					height: 100%;

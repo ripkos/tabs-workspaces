@@ -34,6 +34,7 @@
 	},
 	"dependencies": {
 		"@types/webextension-polyfill": "^0.10.7",
+		"svelte-awesome-color-picker": "^3.0.4",
 		"vite-plugin-web-extension": "^4.1.1",
 		"webextension-polyfill": "^0.10.0"
 	}
