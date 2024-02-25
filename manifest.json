@@ -14,7 +14,9 @@
 	},
 	"background": {
 		"scripts": [
-			"src/background/background.ts"
+			"src/bg-scripts/message-handler.ts",
+			"src/bg-scripts/on-install-handler.ts",
+			"src/bg-scripts/tabs-event-handler.ts"
 		]
 	},
 	"permissions": [

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { getDefaultWorkspace } from '../lib/browser-tools';
-	import { type Workspace, WorkspaceOnInactive } from '../lib/model';
-	import { clearEmptyRows } from './shared';
-	import { draggedWorkspace, workspacesHolder } from './store';
+	import { type Workspace, WorkspaceOnInactive, MsgRequestType } from '../lib/model';
+	import { sendMessageRequest } from './shared';
+	import { draggedWorkspace, workspaces } from './store';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	let selectedWorkspace: Workspace | null = null;
 	const options = [
@@ -24,27 +24,23 @@
 	function clearWorkspace() {
 		selectedWorkspace = null;
 	}
-	function updateSelectedWorkspace() {
+	async function updateSelectedWorkspace() {
 		if (!selectedWorkspace) return;
-		const curr = selectedWorkspace as Workspace;
-		workspacesHolder.update((x) => {
-			let w: Workspace = x.workspaces.find((w) => w.id === curr.id)!;
-			w = { ...curr };
-			return x;
+		await sendMessageRequest({
+			type: MsgRequestType.UPDATE_SINGLE_WORKSPACE,
+			singleWorkspace: selectedWorkspace,
+			windowId: browser.windows.WINDOW_ID_CURRENT,
 		});
 	}
-	function replaceDeletedWithDummy() {
+
+	async function replaceDeletedWithDummy() {
 		if (!selectedWorkspace) return;
-		workspacesHolder.update((x) => {
-			const index = x.workspaces.findIndex((w) => w.id === selectedWorkspace?.id);
-			if (index > -1) {
-				const newID = Math.max(...x.workspaces.map((w) => w.id)) + 1;
-				x.workspaces[index] = getDefaultWorkspace(newID, true);
-			}
-			return x;
+		await sendMessageRequest({
+			type: MsgRequestType.MARK_DELETED_AS_DUMMY,
+			singleWorkspace: selectedWorkspace,
+			windowId: browser.windows.WINDOW_ID_CURRENT,
 		});
 		selectedWorkspace = null;
-		clearEmptyRows(workspacesHolder);
 	}
 </script>
 
@@ -103,9 +99,11 @@
 			{#each colors as c}
 				<button
 					class="color-option"
-					on:click={() => {
-						selectedWorkspace && (selectedWorkspace.colorPrimary = c);
-						updateSelectedWorkspace();
+					on:click={async () => {
+						if (selectedWorkspace !== null) {
+							selectedWorkspace.colorPrimary = c;
+							await updateSelectedWorkspace();
+						}
 					}}
 					style="background-color: {c}; color: {c}">+</button
 				>
@@ -123,7 +121,7 @@
 		</div>
 		<button
 			on:click={replaceDeletedWithDummy}
-			disabled={$workspacesHolder.activeWorkspaceID === selectedWorkspace.id}
+			disabled={$workspaces.some((x) => x.id === selectedWorkspace?.id && x.isActive)}
 			class="btn-delete">Delete</button
 		>
 	{/if}

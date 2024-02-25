@@ -1,31 +1,39 @@
 <script lang="ts">
-	import { clearEmptyRows } from './shared';
-	import { workspacesHolder, draggedWorkspace } from './store';
+	import { MsgRequestType, type Workspace } from '../lib/model';
+	import { sendMessageRequest } from './shared';
+	import { workspaces, draggedWorkspace } from './store';
 	let draggedIndex = -1;
 	let hoverOverIndex = -1;
-	$: len =
-		$workspacesHolder.workspaces.length > 4 ? ($workspacesHolder.workspaces.length > 9 ? 4 : 3) : 2;
+	//$: len = $workspaces.length > 4 ? ($workspaces.length > 9 ? 4 : 3) : 2;
 
-	function replaceDummyWithWorkspace(index: number) {
-		workspacesHolder.update((x) => {
-			x.workspaces[index].isDummy = false;
-			x.workspaces[index].name = 'Workspace';
-			return x;
-		});
-		clearEmptyRows(workspacesHolder);
-	}
-	function setActiveWorkspace(id: number) {
-		workspacesHolder.update((x) => {
-			x.activeWorkspaceID = id;
-			return x;
+	async function replaceDummyWithWorkspace(w: Workspace) {
+		const clone = { ...w };
+		clone.isDummy = false;
+		clone.name = 'Workspace';
+		await sendMessageRequest({
+			type: MsgRequestType.UPDATE_SINGLE_WORKSPACE,
+			singleWorkspace: clone,
+			windowId: browser.windows.WINDOW_ID_CURRENT,
 		});
 	}
 
-	function swapWorkspaces(i1: number, i2: number) {
-		if (i1 === i2) return;
-		workspacesHolder.update((x) => {
-			[x.workspaces[i1], x.workspaces[i2]] = [x.workspaces[i2], x.workspaces[i1]];
-			return x;
+	async function setActiveWorkspace(w: Workspace) {
+		const clone = { ...w };
+		clone.isActive = true;
+		await sendMessageRequest({
+			type: MsgRequestType.UPDATE_SINGLE_WORKSPACE,
+			singleWorkspace: clone,
+			windowId: browser.windows.WINDOW_ID_CURRENT,
+		});
+	}
+
+	async function swapWorkspaces(i1: number, i2: number) {
+		let ws = $workspaces;
+		[ws[i1], ws[i2]] = [ws[i2], ws[i1]];
+		await sendMessageRequest({
+			type: MsgRequestType.UPDATE_WORKSPACES,
+			workspaces: ws,
+			windowId: browser.windows.WINDOW_ID_CURRENT,
 		});
 	}
 
@@ -33,60 +41,58 @@
 </script>
 
 <section>
-	{#if $workspacesHolder}
-		<ul>
-			{#each $workspacesHolder.workspaces as w, i}
-				<li class:drag={drag && i !== draggedIndex && i === hoverOverIndex}>
-					<button
-						style="background-color: {w.colorPrimary};"
-						class:dummy={w.isDummy}
-						draggable={!w.isDummy}
-						on:click={() => {
-							if (w.isDummy) {
-								replaceDummyWithWorkspace(i);
-							} else {
-								setActiveWorkspace(w.id);
-							}
-						}}
-						on:dragstart={(event) => {
-							$draggedWorkspace = w;
-							draggedIndex = i;
-							drag = true;
-							event.dataTransfer && (event.dataTransfer.effectAllowed = 'all');
-						}}
-						on:dragend={() => {
-							draggedIndex = -1;
-							$draggedWorkspace = null;
-						}}
-						on:dragenter={(event) => {
+	<ul>
+		{#each $workspaces as w, i}
+			<li class:drag={drag && i !== draggedIndex && i === hoverOverIndex}>
+				<button
+					style="background-color: {w.colorPrimary};"
+					class:dummy={w.isDummy}
+					draggable={!w.isDummy}
+					on:click={async () => {
+						if (w.isDummy) {
+							await replaceDummyWithWorkspace(w);
+						} else {
+							await setActiveWorkspace(w);
+						}
+					}}
+					on:dragstart={(event) => {
+						$draggedWorkspace = w;
+						draggedIndex = i;
+						drag = true;
+						event.dataTransfer && (event.dataTransfer.effectAllowed = 'all');
+					}}
+					on:dragend={() => {
+						draggedIndex = -1;
+						$draggedWorkspace = null;
+					}}
+					on:dragenter={(event) => {
+						event.preventDefault();
+					}}
+					on:dragleave={(event) => {
+						event.preventDefault();
+						hoverOverIndex = -1;
+					}}
+					on:dragover={(event) => {
+						if (i !== draggedIndex) {
 							event.preventDefault();
-						}}
-						on:dragleave={(event) => {
-							event.preventDefault();
-							hoverOverIndex = -1;
-						}}
-						on:dragover={(event) => {
-							if (i !== draggedIndex) {
-								event.preventDefault();
-								event.dataTransfer && (event.dataTransfer.dropEffect = 'move');
-								hoverOverIndex = i;
-							}
-						}}
-						on:drop={(event) => {
-							if (draggedIndex > -1) {
-								swapWorkspaces(draggedIndex, i);
-							}
-							drag = false;
-							draggedIndex = -1;
-							hoverOverIndex = -1;
-						}}
-					>
-						<span>{w.name}</span>
-					</button>
-				</li>
-			{/each}
-		</ul>
-	{/if}
+							event.dataTransfer && (event.dataTransfer.dropEffect = 'move');
+							hoverOverIndex = i;
+						}
+					}}
+					on:drop={async (event) => {
+						if (draggedIndex > -1) {
+							await swapWorkspaces(draggedIndex, i);
+						}
+						drag = false;
+						draggedIndex = -1;
+						hoverOverIndex = -1;
+					}}
+				>
+					<span>{w.name}</span>
+				</button>
+			</li>
+		{/each}
+	</ul>
 </section>
 
 <style lang="scss">
